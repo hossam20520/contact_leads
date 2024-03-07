@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="group_admin_only" model="res.groups">
+        <field name="name">Admin Only Group</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_erp_manager'))]"/>
+    </record>
+
+</odoo>
