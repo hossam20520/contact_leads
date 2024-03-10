@@ -10,6 +10,7 @@
     'depends': ['base', 'crm'],
     'data': [
         'security/ir.model.access.csv',
+        'views/seqence.xml',
         'views/view.xml',
         'data/data.xml',
     ],

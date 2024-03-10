@@ -8,12 +8,19 @@ class Lead(models.Model):
     _inherit = 'crm.lead'
 
     business_name = fields.Char("Business Name", required=False)
-    client_category = fields.Many2one('client.category', string="Client Category", required=False)
-    restaurant_category = fields.Many2one('restaurant.category', string="Client Category", required=False)
+    client_category = fields.Selection(selection=[('restaurant', 'مطعم'), 
+                                                  ('cafe', 'كافيه'),
+                                                  ('restaurant_cafe', 'مطعم وكافيه'),
+                                                  ('coffee', 'قهوة'),
+                                                  ('hotel', 'فندق'),
+                                                  ('trading', 'شركة توريدات'),
+                                                  ('bakery', 'مخبوزات'),
+                                                  ('sweet', 'حلواني'),], string="Client Category", required=False)
+    restaurant_category = fields.Many2one('restaurant.category', required=False)
     client_type = fields.Many2one('client.type', string="Client Place Type", required=False)
     contact_person = fields.Char(string='Contact Person', required=False)
     job_title = fields.Many2one('job.title', string='Job Title', required=False)
-    gender = fields.Selection(selection=[('male', 'Male'), ('female', 'Female')], string='Gender')
+    gender = fields.Selection(selection=[('male', 'ذكر'), ('female', 'أنثي')], string='Gender')
     national_id = fields.Char(string='National ID', size=14)
 
     # @api.constrains('national_id')
@@ -85,18 +92,26 @@ class ResPartner(models.Model):
     business_name = fields.Char("Business Name", required=False)
     # client_business_type = fields.Selection(selection=[('individual', 'Individual'), ('commercial', 'Commercial')],
     #                                         string='Client Business Type', required=False)
-    client_category = fields.Many2one('client.category', string="Client Category", required=False)
+    client_category = fields.Selection(selection=[('restaurant', 'مطعم'), 
+                                                  ('cafe', 'كافيه'),
+                                                  ('restaurant_cafe', 'مطعم وكافيه'),
+                                                  ('coffee', 'قهوة'),
+                                                  ('hotel', 'فندق'),
+                                                  ('trading', 'شركة توريدات'),
+                                                  ('bakery', 'مخبوزات'),
+                                                  ('sweet', 'حلواني'),], string="Client Category", required=False)
     restaurant_category = fields.Many2one('restaurant.category', string="Client Category", required=False)
     client_type = fields.Many2one('client.type', string="Client Place Type", required=False)
     client_status = fields.Selection(
         selection=[('active', 'نشط'), ('inactive', 'غير نشط'), ('suspended', 'معلق'), ('churn', 'متوقف')],
-        string='Client Status', required=False)
+        string='Client Status', required=False, help='يتم منع عمل فاتورة او امر بيع او عرض سعر في حالة انه (معلق - قائمة سوداء)')
     churn_suspend_reason = fields.Char(string="Churn Suspend Reason")
 
     contact_person = fields.Char(string='Contact Person', required=False)
     job_title = fields.Many2one('job.title', string='Job Title', required=False)
     # phone = fields.Char(unaccent=False, required=False, default='01', size=11, store=True)
     management_address = fields.Char("Management Address", required=False)
+    sales_person = fields.Many2one('res.users', string='Sales Person', help='مين اللي جاب العميل')
 
     # @api.constrains('phone')
     # def _check_phone_length(self):
@@ -104,7 +119,7 @@ class ResPartner(models.Model):
     #         if record.phone and len(record.phone) != 11:
     #             raise ValidationError("Phone number must be 11 characters long.")
 
-    # mobile = fields.Char(unaccent=False, required=False, default='01', size=11)
+    mobile = fields.Char(unaccent=False, required=False, default='+201', size=13)
     # # phone1 = fields.Char(string='Phone 1', required=True, size=11)
     # # phone2 = fields.Char(string='Phone 2', size=11)
     email = fields.Char(string='Email')
@@ -142,67 +157,56 @@ class ResPartner(models.Model):
 
     discount = fields.Float(string='Discount', digits=(10, 2))
 
-    telesales = fields.Many2one('tele.sales', string='Telesales', required=False)
+    telesales = fields.Many2one('res.users', string='Telesales', required=False, help='مين اللي بيتابع العميل بالتيلفون وبيعمله عروض اسعار')
     sales_support = fields.Many2one('sales.support', string='Sales Support', required=False)
     # receipt_start_time = fields.Datetime(string='Receipt Start Time')
-    receipt_start_time = fields.Selection([
-        ('00:00', '12:00 AM'),
-        ('01:00', '1:00 AM'),
-        ('02:00', '2:00 AM'),
-        ('03:00', '3:00 AM'),
-        ('04:00', '4:00 AM'),
-        ('05:00', '5:00 AM'),
-        ('06:00', '6:00 AM'),
-        ('07:00', '7:00 AM'),
-        ('08:00', '8:00 AM'),
-        ('09:00', '9:00 AM'),
-        ('10:00', '10:00 AM'),
-        ('11:00', '11:00 AM'),
-        ('12:00', '12:00 PM'),
-        ('13:00', '1:00 PM'),
-        ('14:00', '2:00 PM'),
-        ('15:00', '3:00 PM'),
-        ('16:00', '4:00 PM'),
-        ('17:00', '5:00 PM'),
-        ('18:00', '6:00 PM'),
-        ('19:00', '7:00 PM'),
-        ('20:00', '8:00 PM'),
-        ('21:00', '9:00 PM'),
-        ('22:00', '10:00 PM'),
-        ('23:00', '11:00 PM'),
-    ], string='Receipt Start Time', required=False, default='12:00')
-    receipt_end_time = fields.Selection([
-        ('00:00', '12:00 AM'),
-        ('01:00', '1:00 AM'),
-        ('02:00', '2:00 AM'),
-        ('03:00', '3:00 AM'),
-        ('04:00', '4:00 AM'),
-        ('05:00', '5:00 AM'),
-        ('06:00', '6:00 AM'),
-        ('07:00', '7:00 AM'),
-        ('08:00', '8:00 AM'),
-        ('09:00', '9:00 AM'),
-        ('10:00', '10:00 AM'),
-        ('11:00', '11:00 AM'),
-        ('12:00', '12:00 PM'),
-        ('13:00', '1:00 PM'),
-        ('14:00', '2:00 PM'),
-        ('15:00', '3:00 PM'),
-        ('16:00', '4:00 PM'),
-        ('17:00', '5:00 PM'),
-        ('18:00', '6:00 PM'),
-        ('19:00', '7:00 PM'),
-        ('20:00', '8:00 PM'),
-        ('21:00', '9:00 PM'),
-        ('22:00', '10:00 PM'),
-        ('23:00', '11:00 PM'),
-    ], string='Receipt Start Time', required=False, default='12:00')
+    receipt_start_time = fields.Datetime()
+    receipt_end_time = fields.Datetime()
     # receipt_end_time = fields.Datetime(string='Receipt End Time', required=False)
     vendor = fields.Many2one('vendor.type', string='Vendor', required=False)
     sales_channel = fields.Many2one('sales.channel', string='Sales Channel', required=False)
-    telesales_support = fields.Many2one('telesales.support', string='Telesales Support', required=False)
-    onground_support = fields.Many2one('onground.support', string='Onground Support', required=False)
+    telesales_support = fields.Many2one('res.users', string='Telesales Support', required=False, help='مين اللي شغل العميل')
+    onground_support = fields.Many2one('res.users', required=False, help='مين بيتابع العميل على الارض')
+    client_id = fields.Char(string="Serial Number", readonly=True, copy=False, default="/")
+    area_id = fields.Many2one('area', string='المنطقة')
+    
+    
+    # @api.onchange('state_id')
+    # def onchange_state_id(self):
+    #     if self.state_id:
+    #         # Filter areas based on the selected state
+    #         areas = self.env['your.area].search([('state_id', '=', self.state_id.id)])
+    #         domain = {'area': [('id', 'in', areas.ids)]}
+    #     else:
+    #         # If no state selected, show all areas
+    #         domain = {'area': []}
 
+    #     return {'domain': domain}
+
+    @api.model
+    def create(self, values):
+        if not values.get('ref'):
+            values['ref'] = values.get('ref', 'Generated Automatic')
+        return super(ResPartner, self).create(values)
+        
+    # @api.model
+    # def create(self, vals):
+    #     partner_type = self._context.get('res_partner_search_mode')
+
+    #     if partner_type == 'customer':
+    #         vals['ref'] = self.env['ir.sequence'].next_by_code('customer.number')
+
+    #     return super(ResPartner, self).create(vals)
+
+
+class Area(models.Model):
+    _name = 'area'
+
+    name = fields.Char("name")
+    state_id = fields.Many2one("res.country.state", string='State', ondelete='restrict',
+                              )
+    # country_id = fields.Many2one('res.country', string='Country', ondelete='restrict', default=)
+    
 
 class ClientCategory(models.Model):
     _name = 'client.category'

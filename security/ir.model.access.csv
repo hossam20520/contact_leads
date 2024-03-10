@@ -11,4 +11,5 @@ access_vendor_type,vendor.type,model_vendor_type,base.group_user,1,1,1,1
 access_sales_channel,sales.channel,model_sales_channel,base.group_user,1,1,1,1
 access_telesales_support,telesales.support,model_telesales_support,base.group_user,1,1,1,1
 access_onground_support,onground.support,model_onground_support,base.group_user,1,1,1,1
+contact_leads.access_area,access_area,contact_leads.model_area,base.group_user,1,1,1,1
 
